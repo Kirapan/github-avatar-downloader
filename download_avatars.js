@@ -1,5 +1,6 @@
 var request = require('request');
-var token = require('./secret.js');
+require('dotenv').config();
+//var token = require('./secret.js');
 var fs = require('fs');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
@@ -15,7 +16,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
       'User-Agent': 'request',
-      'Authorization': "token " + token.GITHUB_TOKEN
+      'Authorization': "token " + process.env.secretToken
       }
   };
 
@@ -34,6 +35,10 @@ getRepoContributors(repoOwner, repoName, function(err, result) {
 });
 
 function downloadImageByURL(url, filePath) {
+  var dir = './avatars';
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+}
   request.get(url)
     .on('error', function (err) {
       throw err;
